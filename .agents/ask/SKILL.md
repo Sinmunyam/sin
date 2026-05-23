@@ -24,6 +24,25 @@ If a related file **was** found, skip this skill and proceed directly to code/co
 
 ---
 
+## Step 0 — Check for Existing Draft
+
+Before assessing knowledge level, check if a Vault note already exists at the inferred path with `status: incomplete`.
+
+### If an incomplete draft is found
+
+- Do **not** restart the session from scratch.
+- Read the Session Log to recover context: topic, questions asked, user responses, and last outcome.
+- Greet the user with a resume prompt:
+  - _"Welcome back — looks like we were working on [topic]. Last time you [summary of last round outcome]. Ready to continue?"_
+- If user confirms → restore both counters from the Session Log and resume from the last round in Step 3.
+- If user wants to restart → clear the Session Log, reset both counters to 0, and begin from Step 1.
+
+### If no incomplete draft is found
+
+- Proceed normally to Step 1.
+
+---
+
 ## Step 1 — Assess Knowledge Level
 
 Read the user's prompt carefully. Classify their knowledge into one of three levels:
@@ -64,9 +83,11 @@ Read the user's prompt carefully. Classify their knowledge into one of three lev
 
 > **Skip this step entirely if user was classified as Know.**
 
-At the start of every response in this loop, restate the current struggle count silently in your reasoning so you do not lose track: e.g. `[struggle count: 1/3]`. Do not show this to the user.
+At the start of every response in this loop, restate both counters silently in your reasoning so you do not lose track: e.g. `[struggle count: 1/3] [off-topic count: 0/2]`. Do not show this to the user.
 
-After posing the question, evaluate the user's response against one of three outcomes:
+After each question round, append the exchange to a draft Vault note (see Step 3a). This ensures progress is not lost if the session ends early.
+
+After posing the question, evaluate the user's response against one of four outcomes:
 
 ### If user shows struggle or misunderstanding
 
@@ -81,15 +102,22 @@ After posing the question, evaluate the user's response against one of three out
 - Do **not** increment the struggle counter — this is progress, not failure.
 - Ask one more focused follow-up question and loop back to Step 3.
 
+### If user goes off-topic or gives a nonsense/joke response
+
+- Do **not** increment the struggle counter — this is not a comprehension failure.
+- Increment the off-topic counter by 1.
+- If off-topic count is 1: redirect warmly — _"Let's stay focused — [restate the question]."_
+- If off-topic count reaches 2: end the session — _"Seems like now might not be the right time. The draft note has been saved so we can pick up where we left off whenever you're ready."_
+
 ### If struggle counter reaches 3
 
 - Stop the loop immediately.
-- Do **not** write to the Vault.
+- Mark the draft Vault note as `status: incomplete`.
 - Suggest external resources relevant to the topic. Pick the most appropriate source based on the topic type:
   - Programming language or web API → MDN, official language docs
   - Framework or library → that project's official docs
   - CS concept → Wikipedia, a reputable textbook, or a known course (e.g. CS50, MIT OpenCourseWare)
-- Example: _"It might help to read up on this before we continue. A good starting point for [topic] is [specific resource]. Come back once you've had a look."_
+- Example: _"It might help to read up on this before we continue. A good starting point for [topic] is [specific resource]. Come back once you've had a look — your draft note is saved."_
 - End the session.
 
 ### If user shows real understanding
@@ -100,18 +128,42 @@ After posing the question, evaluate the user's response against one of three out
 
 ---
 
+## Step 3a — Draft Note (Session State)
+
+At the start of the session, create a draft Vault note at the inferred path with the following structure:
+
+```md
+# [Topic Title]
+
+status: incomplete
+
+## Session Log
+
+### Round [N]
+
+**Question:** [question asked]
+**Response:** [user's response]
+**Outcome:** [struggle / partial / off-topic / understood]
+```
+
+After each round in Step 3, append the latest exchange to the Session Log. This allows the next session to resume context instead of restarting from scratch.
+
+Once understanding is confirmed in Step 4, remove the Session Log section and replace with the final note structure.
+
+---
+
 ## Step 4 — Update / Create File in Vault
 
 Once the user demonstrates real understanding:
 
 1. Infer a reasonable Vault path from the topic (e.g. `Programming/JavaScript/closures.md`). Only ask the user if the topic is genuinely ambiguous.
-2. **Create** a new `.md` note if no file exists, or **update** an existing one if a related file was found earlier.
-3. Structure the note with:
+2. Replace the draft note content with the final structure:
    - **Topic title** as the H1 heading
    - **Summary** — concise definition in the user's own framing
    - **Key concepts** — bullet list of what was discussed
    - **Examples** — the analogies or hints given during the session
    - **Links** — `[[wikilinks]]` to related Vault notes if applicable
+3. Set `status: complete`.
 
 ---
 
@@ -130,11 +182,14 @@ If the user was classified as **Know**, skip redundant explanation and proceed t
 
 ## Rules
 
+- **Always check for an incomplete draft before starting** — resume from session state if found, never restart blindly.
 - **Never generate code before confirming understanding** for Clueless or Know-Some users.
 - **Never give the answer directly** — always guide through questions first.
 - **One question at a time** — do not overwhelm with multiple questions at once.
 - **Interrogate, don't lecture** — the user's explanation is the proof of understanding, not your explanation.
 - **Partial answers are progress** — acknowledge them warmly and nudge, do not penalize.
-- **After 3 failed attempts, exit the loop** — suggest a specific resource matched to the topic type and end the session without writing to the Vault.
-- **Restate struggle count internally each turn** — do not lose track of where the user is in the loop.
+- **Off-topic responses are not comprehension failures** — redirect once, end gracefully on the second.
+- **After 3 failed attempts, exit the loop** — suggest a specific resource matched to the topic type and end the session.
+- **Restate both counters internally each turn** — do not lose track of where the user is in the loop.
+- **Always maintain a draft note** — append each round so session state is never lost.
 - Vault notes must be written in Markdown and use `[[wikilinks]]` for internal links.
