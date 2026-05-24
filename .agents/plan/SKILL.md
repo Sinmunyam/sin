@@ -20,10 +20,11 @@ A Socratic planning skill for people who want to **understand what they build**,
 ## Step 1 — Find the vault
 
 Check in this order:
-1. Project `CLAUDE.md` (or parent `CLAUDE.md`) for `obsidian_vault`, `vault_path`, or an Obsidian heading.
-2. `~/.claude/CLAUDE.md` for a global vault setting.
-3. Additional working directories for a folder containing `.obsidian/`.
-4. If not found: ask once, suggest they add it to `CLAUDE.md`.
+1. `~/.claude/vault-config.json` → `vault_path`. This is the canonical source, written by `init-vault`.
+2. Fallback: project `CLAUDE.md` (or parent `CLAUDE.md`) for `obsidian_vault`, `vault_path`, or an Obsidian heading.
+3. Fallback: `~/.claude/CLAUDE.md` for a global vault setting.
+4. Fallback: additional working directories for a folder containing `.obsidian/`.
+5. If not found: ask once, suggest they run `init-vault` to set it up properly.
 
 **If vault is missing or empty:** Continue with what you know from conversation. Note: *"I couldn't read your vault — I'm working from what you've told me."* Treat every technical concept mentioned as unverified.
 

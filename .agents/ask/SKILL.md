@@ -24,9 +24,20 @@ If a related file **was** found, skip this skill and proceed directly to code/co
 
 ---
 
-## Step 0 — Check for Existing Draft
+## Step 0 — Resolve vault path
 
-Before assessing knowledge level, check if a Vault note already exists at the inferred path with `status: incomplete`.
+1. Read `~/.claude/vault-config.json` → `vault_path`. This is the canonical source, written by `init-vault`.
+2. If missing or points to a directory without `_claude/vault-spec.md` → stop:
+   - _"No initialized vault found. Run `init-vault` first."_
+3. Read `_claude/vault-spec.md` to refresh schema and lifecycle rules.
+
+All vault paths in later steps are relative to `<vault_path>`.
+
+---
+
+## Step 0a — Check for Existing Draft
+
+Before assessing knowledge level, check if a session draft exists at `<vault>/_claude/drafts/<topic-slug>.md`.
 
 ### If an incomplete draft is found
 
@@ -128,14 +139,21 @@ After posing the question, evaluate the user's response against one of four outc
 
 ---
 
-## Step 3a — Draft Note (Session State)
+## Step 3a — Session Draft (not a vault note)
 
-At the start of the session, create a draft Vault note at the inferred path with the following structure:
+Drafts are session state, **not** vault notes. They live in `<vault>/_claude/drafts/<topic-slug>.md` so they never pollute `concepts/`, `research/`, etc. with non-conformant frontmatter.
+
+Create the draft at session start with this structure:
 
 ```md
-# [Topic Title]
-
+---
+topic: [Topic Title]
+intended_type: concept    # or research / project / review
 status: incomplete
+started: YYYY-MM-DD
+---
+
+# [Topic Title]
 
 ## Session Log
 
@@ -148,22 +166,26 @@ status: incomplete
 
 After each round in Step 3, append the latest exchange to the Session Log. This allows the next session to resume context instead of restarting from scratch.
 
-Once understanding is confirmed in Step 4, remove the Session Log section and replace with the final note structure.
+When understanding is confirmed in Step 4, the draft is consumed by `update-vault` and then deleted.
 
 ---
 
-## Step 4 — Update / Create File in Vault
+## Step 4 — Hand off to `update-vault`
 
-Once the user demonstrates real understanding:
+Once the user demonstrates real understanding, do **not** write the final note yourself. The vault has one write path: `update-vault`. This prevents schema drift and ensures MOC linking, domain registration, and cross-domain link rules are enforced.
 
-1. Infer a reasonable Vault path from the topic (e.g. `Programming/JavaScript/closures.md`). Only ask the user if the topic is genuinely ambiguous.
-2. Replace the draft note content with the final structure:
-   - **Topic title** as the H1 heading
+1. Distill the validated content from the session into a short body:
    - **Summary** — concise definition in the user's own framing
-   - **Key concepts** — bullet list of what was discussed
-   - **Examples** — the analogies or hints given during the session
-   - **Links** — `[[wikilinks]]` to related Vault notes if applicable
-3. Set `status: complete`.
+   - **Key concepts** — bullets from the discussion
+   - **Examples** — the analogies or hints used
+2. Invoke `update-vault` in Mode A (add note), passing:
+   - `intended_type` from the draft frontmatter (concept / research / project / review)
+   - The distilled body
+   - Suggested title and (optional) aliases
+3. `update-vault` handles: discovery (rejecting duplicates), path inference, template fill, MOC linking, cross-domain link proposal, write+verify.
+4. After `update-vault` reports success, delete the session draft at `<vault>/_claude/drafts/<topic-slug>.md`.
+
+If `update-vault` aborts (e.g. duplicate title, user rejects all cross-domain link candidates), keep the draft in place so the session can resume.
 
 ---
 
@@ -193,3 +215,5 @@ If the user was classified as **Know**, skip redundant explanation and proceed t
 - **Restate both counters internally each turn** — do not lose track of where the user is in the loop.
 - **Always maintain a draft note** — append each round so session state is never lost.
 - Vault notes must be written in Markdown and use `[[wikilinks]]` for internal links.
+- Never write to `concepts/`, `research/`, `projects/`, or `reviews/` directly — all final writes go through `update-vault`.
+- Drafts live only in `<vault>/_claude/drafts/`. Delete them after handoff succeeds.

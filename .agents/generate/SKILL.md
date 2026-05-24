@@ -14,6 +14,13 @@ The default behavior is NOT "make code." The default behavior is:
 
 ---
 
+## Step 0 — Vault precondition
+
+1. Read `~/.claude/vault-config.json`. If missing → stop and tell the user to run `init-vault` first. Code generation requires a vault so that grounding can be verified.
+2. Confirm the supporting vault note(s) exist under `<vault_path>` before generating. If the topic has no supporting note, route the user to `ask` rather than guessing.
+
+---
+
 ## Generation Mode
 
 ### Pre-generation checklist (state these before writing any code)
@@ -39,3 +46,4 @@ The default behavior is NOT "make code." The default behavior is:
 - Never generate project code unless the topic has been confirmed or already exists in the vault.
 - Never treat user agreement ("sounds good," "ok," "yes") as a passed gate question.
 - Never expand scope silently.
+- Never run without a valid `~/.claude/vault-config.json`. Route to `init-vault` first.
