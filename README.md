@@ -57,13 +57,13 @@ This clones the repo and drops each folder under `skills/` into `~/.claude/skill
 Install a single skill instead of all of them:
 
 ```bash
-npx skills add A-SKE22-Team/sin/generate
+npx skills add Sinmunyam/sin/generate
 ```
 
 **Manual alternative — git clone + copy:**
 
 ```bash
-git clone https://github.com/A-SKE22-Team/sin.git
+git clone https://github.com/Sinmunyam/sin.git
 # macOS / Linux
 cp -r sin/skills/* ~/.claude/skills/
 # Windows (PowerShell)
