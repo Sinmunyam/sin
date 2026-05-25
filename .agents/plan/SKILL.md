@@ -1,106 +1,95 @@
 ---
 name: plan
-description: Help the user plan a project by grounding it in what they genuinely understand. Reads their Obsidian vault (their knowledge map), identifies gaps between what they know and what they need, and either teaches them the missing pieces or — if they already have the foundation — helps them build a real plan. Use when the user wants to build something, scope new work, or figure out where to start. Trigger on: "I want to build", "I'm thinking of starting", "how should I approach", "help me figure out", "I don't know where to begin".
+description: Plan a project by grounding it in what the user genuinely understands. Reads the Obsidian vault (the user's knowledge map), identifies gaps between what they know and what the goal requires, and either writes the plan or surfaces the gaps and routes them (to `/explain` for analogy bridges, or to `add-new-concepts` once they've filed the foundation). Trigger on phrasings like "I want to build", "I'm thinking of starting", "how should I approach", "help me figure out", "I don't know where to begin", "what's a good way to scope", "can you outline steps for", "I'm planning to make". Does not teach. Plans, and routes teaching elsewhere.
 ---
 
 # Plan
 
-A Socratic planning skill for people who want to **understand what they build**, not just ship code they can't explain. The vault is the user's knowledge map. The skill checks the map before writing a single step.
+Vault-grounded project planning for people who want to understand what they build, not just ship code they can't explain. The vault is the user's knowledge map. This skill checks the map before writing a single step and refuses to plan around foundations the user hasn't actually filed.
 
 ## Core principles
 
-1. **No plan before understanding.** If the user doesn't have the knowledge their goal requires, they don't get a plan yet — they get a path to the knowledge first.
+1. **No plan before understanding.** If the user doesn't have the knowledge their goal requires, they don't get a plan yet. They get a path to the knowledge first.
 2. **Extract before you ask.** Read what the user already told you. Only ask for what's genuinely missing.
-3. **The vault is the source of truth.** Check it before you reflect anything back. Don't assume what the user knows.
-4. **Teach, don't hand over.** When gaps exist, offer to research together or explain concepts — but require the user to engage, not just receive.
-5. **The plan reflects their words.** When you write it, use their language. Mark structural additions clearly as `**Consider this before moving on:**` — not optional decoration, but something they should consciously accept or reject.
+3. **The vault is the source of truth.** Check it before reflecting anything back. Don't assume what the user knows.
+4. **Don't teach in this skill.** Teaching lives in `/explain` (analogy bridges) and external resources (foundational learning). Surface gaps and route. Do not run a teach loop here.
+5. **The plan reflects their words.** Use their language. Mark structural additions clearly as `**Consider this before moving on:**` so they consciously accept or reject them.
 
----
+## Step 1: Find the vault
 
-## Step 1 — Find the vault
+Read `~/.claude/vault-config.json` for `vault_path`. If missing, stop and tell the user to run `init-vault`. Confirm `<vault_path>/_claude/vault-spec.md` exists; if not, the vault is broken and should be re-initialized.
 
-Check in this order:
-1. `~/.claude/vault-config.json` → `vault_path`. This is the canonical source, written by `init-vault`.
-2. Fallback: project `CLAUDE.md` (or parent `CLAUDE.md`) for `obsidian_vault`, `vault_path`, or an Obsidian heading.
-3. Fallback: `~/.claude/CLAUDE.md` for a global vault setting.
-4. Fallback: additional working directories for a folder containing `.obsidian/`.
-5. If not found: ask once, suggest they run `init-vault` to set it up properly.
+This skill uses the same vault gate as the rest of the chain. Do not fall back to `CLAUDE.md` or `.obsidian/` heuristics, and do not "plan from conversation" when no vault is found. A plan grounded in unverified knowledge is exactly what this skill exists to prevent.
 
-**If vault is missing or empty:** Continue with what you know from conversation. Note: *"I couldn't read your vault — I'm working from what you've told me."* Treat every technical concept mentioned as unverified.
-
----
-
-## Step 2 — Extract intent
+## Step 2: Extract intent
 
 Before asking anything, check whether the user's message already answers:
 
-- **What** — the concrete thing they want to build or accomplish
-- **Why** — the motivation (learn, ship, fix, explore)
-- **Scope** — a weekend, open-ended, for a course
+- **What:** the concrete thing they want to build or accomplish.
+- **Why:** the motivation (learn, ship, fix, explore).
+- **Scope:** weekend, open-ended, for a course.
 
-If all three are present, skip to Step 3. If one is missing, ask for only that one thing — not all three as a list. Ask naturally, inside a sentence if possible.
+If all three are present, skip to Step 3. If one is missing, ask for that one thing. Do not present all three as a checklist.
 
----
+## Step 3: Read the vault
 
-## Step 3 — Read the vault
+With the goal in hand, search for what the user already knows:
 
-With their goal in hand, search for what they already know:
+- Glob the vault for filenames matching keywords from the goal.
+- Grep for topic names, tech, and concepts mentioned.
+- Read the 3 to 6 most relevant notes.
 
-- `Glob` the vault for filenames matching keywords from their goal.
-- `Grep` for topic names, tech, and concepts they mentioned.
-- Read the 3–6 most relevant notes.
+Look for:
 
-You are looking for:
-- **Foundation** — do they understand the core concepts their goal requires?
-- **Gaps** — what does the goal need that the vault doesn't cover?
-- **Patterns** — how have they approached similar work before?
-- **Stated principles** — any design values or preferences they've recorded?
+- **Foundation:** do they understand the core concepts the goal requires?
+- **Gaps:** what does the goal need that the vault doesn't cover?
+- **Patterns:** how have they approached similar work before?
+- **Stated principles:** any design values or preferences they've recorded?
 
----
+## Step 4: Check the gaps
 
-## Step 4 — Check the gaps
-
-This is the key decision point.
+This is the decision point.
 
 **If the vault shows they have the foundation:**
-Reflect it back in 2–4 sentences, then ask 1–2 questions that surface the highest-stakes assumptions — questions where the answer would materially change the plan. Then stop and wait before writing anything.
+Reflect it back in 2 to 4 sentences. Ask 1 or 2 questions that surface the highest-stakes assumptions, where the answer would materially change the plan. Then stop and wait before writing.
 
-**If the vault shows meaningful gaps** (concepts the goal requires that they haven't learned):
-Do not write the plan. Instead:
+**If the vault shows meaningful gaps:**
+Do not write the plan. Surface the gap and route. This skill does not teach.
 
-> "To build [X], you'll need a solid understanding of [Y] and [Z] — and I don't see those in your notes yet. Would you like to research this on your own first and come back, or would you like to learn it together here? Either works — I just want to make sure you actually understand what you're building."
+_"To build [X] you'll need a solid understanding of [Y] and [Z], and I don't see those in your notes yet. Two options:_
+_1. Research [Y] and [Z] on your own, then file them via `add-new-concepts` when you're ready._
+_2. If anything in your existing vault is structurally similar, try `/explain [Y]` for an analogy bridge._
 
-Then wait for their choice:
-- **"I'll research first"** → Offer a short list of specific things to understand, not links to copy-paste. When they return, re-read the vault. If nothing new is there, ask what they learned before proceeding — don't assume the research happened just because time passed.
-- **"Let's learn together"** → Teach the gap. Use questions, not lectures. Check for understanding before moving on. When satisfied, proceed to Step 5.
+_Either way, come back once your vault reflects the foundation. I want to plan from what you actually know, not what you've heard of."_
 
-**Calibration — what counts as a meaningful gap:**
-- They want to build auth but have no notes on sessions, tokens, or security fundamentals → gap.
-- They want to add a dark mode toggle but have notes on CSS and React → no gap.
-- They want to build a REST API but their notes only cover the concept, not implementation → partial gap — surface it, ask how confident they feel, proceed with caution.
+When the user returns, re-read the vault from Step 3. If the gap notes still aren't there, ask what they learned before proceeding. Don't assume the research happened just because time passed. If they want to plan despite the gap, surface the risk in one sentence and let them choose. The user owns their work.
 
----
+**Calibration: what counts as a meaningful gap:**
 
-## Step 5 — Write the plan
+- Building auth with no notes on sessions, tokens, or security fundamentals: gap.
+- Adding a dark mode toggle with notes on CSS and React: no gap.
+- Building a REST API where notes cover the concept but not implementation: partial gap. Surface it, ask how confident they feel, proceed with caution.
 
-Once the user has the foundation (either confirmed by vault or built in Step 4), write the plan.
+## Step 5: Write the plan
+
+Once the foundation is in place (confirmed by vault, possibly after Step 4 routing), write the plan.
 
 Rules:
+
 - Use their words, their priorities, their structure.
 - Each step is an imperative ("Write...", "Test...", "Sketch...").
-- Where you add something they didn't decide, mark it `**Consider this before moving on:**` with a one-sentence explanation of why it matters. This is not optional decoration — the user should consciously accept or reject it, not skip past it. **At most 2 per plan** — if you feel the need for more, you're overstepping; the plan has stopped being theirs.
-- 5–8 steps maximum. Tight beats complete.
-- No timelines, no risk registers, no ceremony — unless they asked.
+- For structural additions they didn't decide, prefix with `**Consider this before moving on:**` and add a one-sentence reason. This is a checkpoint, not decoration. At most 2 per plan. If you feel the need for more, you're overstepping, and the plan has stopped being theirs.
+- 5 to 8 steps maximum. Tight beats complete.
+- No timelines, no risk registers, no ceremony, unless the user asked for them.
 
-If their responses reveal new significant gaps, ask one more round of targeted questions before writing. Don't loop indefinitely — if they've engaged, that's enough.
-
----
+If their responses reveal new significant gaps, ask one more round of targeted questions before writing. Do not loop indefinitely. If they've engaged, that's enough.
 
 ## What this skill never does
 
-- Never writes a plan before verifying the user has the underlying knowledge.
+- Never writes a plan before verifying the user has the underlying knowledge in the vault.
 - Never asks for information the user already provided.
 - Never hands over code or a finished solution to bypass the learning step.
-- Never lectures unprompted — explains only what's needed for the plan to make sense.
+- Never teaches inside this skill. Routes to `/explain` or external research.
 - Never writes the plan to a file unless asked.
-- Never overrides the user's direction — surfaces tradeoffs, then lets them choose.
+- Never overrides the user's direction. Surfaces tradeoffs, then lets them choose.
+- Never falls back to non-vault sources for grounding. If `~/.claude/vault-config.json` is missing, stop and route to `init-vault`.

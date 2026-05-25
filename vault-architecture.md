@@ -130,9 +130,9 @@ domain: ai/ml
    - `grep -ril "^title:.*<term>" concepts/ research/` — title match
    - `grep -ril "<term>" concepts/*/aliases* concepts/` against `aliases:` lines — alias match
 2. **Hit** → read file. Tune depth to `confidence:` (`learning` = explain; `fluent` = terse).
-3. **Miss** → ask: "I don't see X. Do you know it, or should I teach you?"
-   - Knows it → draft concept from template, `status: draft`.
-   - Wants to learn → draft research note, propose extraction later.
+3. **Miss** → "I don't see X in your vault. Do you understand it well enough to file it as a concept?"
+   - Yes → route to `add-new-concepts`; it will ask for a one-sentence paraphrase, then file.
+   - No → suggest `/explain X` for an analogy bridge if something related exists in the vault, otherwise point the user at an external resource. Code/plan work for this topic is blocked until the concept is filed.
 4. Extending a concept:
    - Small clarification → edit, bump `updated:` if substantive.
    - New sub-topic → new concept file, link inline.
