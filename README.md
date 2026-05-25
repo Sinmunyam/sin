@@ -49,7 +49,7 @@ npm install -g @anthropic-ai/claude-code
 **Recommended — one-liner via the `skills` CLI:**
 
 ```bash
-npx skills add A-SKE22-Team/sin
+npx skills add Sinmunyam/sin
 ```
 
 This clones the repo and drops each folder under `skills/` into `~/.claude/skills/`. Works on macOS, Linux, and Windows (PowerShell).
