@@ -8,7 +8,7 @@ LLMs happily generate code the user can't explain, debug, or maintain. `sin` mak
 
 ## Skills
 
-All skills live in `.agents/<skill-name>/SKILL.md`.
+All skills live in `skills/<skill-name>/SKILL.md`.
 
 | Skill | Purpose |
 |---|---|
@@ -20,7 +20,7 @@ All skills live in `.agents/<skill-name>/SKILL.md`.
 
 ## Vault structure
 
-Defined in `vault-redesign-proposal.md` and mirrored inside each vault at `_claude/vault-spec.md`.
+Defined in `vault-architecture.md` and mirrored inside each vault at `_claude/vault-spec.md`.
 
 ```
 vault/
@@ -34,7 +34,7 @@ vault/
 └── templates/      # per-type frontmatter scaffolds
 ```
 
-Five note types — `concept`, `research`, `project`, `review`, `moc` — each with a defined frontmatter schema and lifecycle (see `vault-redesign-proposal.md`).
+Five note types — `concept`, `research`, `project`, `review`, `moc` — each with a defined frontmatter schema and lifecycle (see `vault-architecture.md`).
 
 ## Install
 
@@ -44,26 +44,33 @@ Five note types — `concept`, `research`, `project`, `review`, `moc` — each w
 npm install -g @anthropic-ai/claude-code
 ```
 
-### 2. Clone the repository
+### 2. Install the skills
+
+**Recommended — one-liner via the `skills` CLI:**
+
+```bash
+npx skills add A-SKE22-Team/sin
+```
+
+This clones the repo and drops each folder under `skills/` into `~/.claude/skills/`. Works on macOS, Linux, and Windows (PowerShell).
+
+Install a single skill instead of all of them:
+
+```bash
+npx skills add A-SKE22-Team/sin/generate
+```
+
+**Manual alternative — git clone + copy:**
 
 ```bash
 git clone https://github.com/A-SKE22-Team/sin.git
-cd sin
+# macOS / Linux
+cp -r sin/skills/* ~/.claude/skills/
+# Windows (PowerShell)
+Copy-Item -Recurse sin\skills\* $env:USERPROFILE\.claude\skills\
 ```
 
-### 3. Copy the skills into your Claude Code agents directory
-
-The skills live in `.agents/` — you need to copy them to where Claude Code can find them. Typically that's your project's `.agents/` folder or a global location:
-
-```bash
-# To use in a specific project:
-cp -r .agents/ /path/to/your/project/
-
-# Or to use globally:
-cp -r .agents/ ~/.claude/agents/
-```
-
-### 4. Initialize your vault
+### 3. Initialize your vault
 
 Once the skills are in place, run Claude Code and invoke the first skill:
 
@@ -99,9 +106,9 @@ This is intentional: the gate is "you've internalized this enough to write a one
 ## Layout
 
 ```
-.agents/             # skill definitions (SKILL.md per skill)
+skills/              # skill definitions (SKILL.md per skill)
 vault-template/      # canonical templates init-vault copies into new vaults
-vault-redesign-proposal.md   # the vault spec
+vault-architecture.md   # the vault spec
 README.md
 LICENSE
 ```

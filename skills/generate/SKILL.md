@@ -23,8 +23,7 @@ Operating principle:
 Before writing any code, state these three things and **wait for the user to confirm each one** before proceeding:
 
 1. The assumptions you're relying on.
-2. Which vault notes or prior decisions are supporting this implementation.
-3. The scope: which files will be touched, what will be added or changed.
+2. The scope: which files will be touched, what will be added or changed.
 
 User acknowledgment ("sounds good", "ok", "yes") is not confirmation. Confirmation means the user has read each item and ratified it. If they ratify by paraphrasing back the assumption in their own words, that counts. If anything is unclear, ask one focused question instead of guessing.
 
