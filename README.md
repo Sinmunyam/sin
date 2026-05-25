@@ -36,6 +36,43 @@ vault/
 
 Five note types — `concept`, `research`, `project`, `review`, `moc` — each with a defined frontmatter schema and lifecycle (see `vault-redesign-proposal.md`).
 
+## Install
+
+### 1. Install Claude Code (if you haven't already)
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/A-SKE22-Team/sin.git
+cd sin
+```
+
+### 3. Copy the skills into your Claude Code agents directory
+
+The skills live in `.agents/` — you need to copy them to where Claude Code can find them. Typically that's your project's `.agents/` folder or a global location:
+
+```bash
+# To use in a specific project:
+cp -r .agents/ /path/to/your/project/
+
+# Or to use globally:
+cp -r .agents/ ~/.claude/agents/
+```
+
+### 4. Initialize your vault
+
+Once the skills are in place, run Claude Code and invoke the first skill:
+
+```
+> Use init-vault to set up my vault at ~/my-vault
+```
+
+This scaffolds your Obsidian vault structure and writes `~/.claude/vault-config.json`.
+
 ## Getting started
 
 1. Run `init-vault` and point it at a directory. It scaffolds the structure and writes `~/.claude/vault-config.json`.
