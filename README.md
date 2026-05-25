@@ -1,4 +1,4 @@
-# sin
+# Sin
 
 A set of Claude Code skills that ground code generation in the user's own Obsidian knowledge vault. The premise: don't let the model write code for topics the user doesn't understand. The vault is the user's knowledge map; skills read it before they write.
 
