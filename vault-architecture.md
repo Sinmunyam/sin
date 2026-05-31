@@ -132,11 +132,11 @@ domain: ai/ml
 2. **Hit** → read file. Tune depth to `confidence:` (`learning` = explain; `fluent` = terse).
 3. **Miss** → "I don't see X in your vault. Do you understand it well enough to file it as a concept?"
    - Yes → route to `add-new-concepts`; it will ask for a one-sentence paraphrase, then file.
-   - No → suggest `/explain X` for an analogy bridge if something related exists in the vault, otherwise point the user at an external resource. Code/plan work for this topic is blocked until the concept is filed.
+   - No → suggest `/learn X`: bridge mode for an analogy if something related exists in the vault, or loop mode to work through it from scratch. Otherwise point the user at an external resource. Code/plan work for this topic is blocked until the concept is filed.
 4. Extending a concept:
    - Small clarification → edit, bump `updated:` if substantive.
    - New sub-topic → new concept file, link inline.
-5. Confidence change is user-driven only. Do not modify without explicit request. No `updated:` bump.
+5. Confidence change is user-driven only. Do not modify without explicit request — the `review` skill is the sanctioned path: it audits recall and proposes a `confidence:` change (up or down) for the user to confirm. No `updated:` bump on a confidence change.
 
 ## Extraction
 

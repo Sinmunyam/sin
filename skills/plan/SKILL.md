@@ -12,7 +12,7 @@ Vault-grounded project planning for people who want to understand what they buil
 1. **No plan before understanding.** If the user doesn't have the knowledge their goal requires, they don't get a plan yet. They get a path to the knowledge first.
 2. **Extract before you ask.** Read what the user already told you. Only ask for what's genuinely missing.
 3. **The vault is the source of truth.** Check it before reflecting anything back. Don't assume what the user knows.
-4. **Don't teach in this skill.** Teaching lives in `/explain` (analogy bridges) and external resources (foundational learning). Surface gaps and route. Do not run a teach loop here.
+4. **Don't teach in this skill.** Teaching lives in `/learn` (bridge-mode analogies and from-scratch loops) and external resources. Surface gaps and route. Do not run a teach loop here.
 5. **The plan reflects their words.** Use their language. Mark structural additions clearly as `**Consider this before moving on:**` so they consciously accept or reject them.
 
 ## Step 1: Find the vault
@@ -58,7 +58,7 @@ Do not write the plan. Surface the gap and route. This skill does not teach.
 
 _"To build [X] you'll need a solid understanding of [Y] and [Z], and I don't see those in your notes yet. Two options:_
 _1. Research [Y] and [Z] on your own, then file them via `add-new-concepts` when you're ready._
-_2. If anything in your existing vault is structurally similar, try `/explain [Y]` for an analogy bridge._
+_2. If anything in your existing vault is structurally similar, try `/learn [Y]` for an analogy bridge — or to work through it from scratch._
 
 _Either way, come back once your vault reflects the foundation. I want to plan from what you actually know, not what you've heard of."_
 
@@ -89,7 +89,7 @@ If their responses reveal new significant gaps, ask one more round of targeted q
 - Never writes a plan before verifying the user has the underlying knowledge in the vault.
 - Never asks for information the user already provided.
 - Never hands over code or a finished solution to bypass the learning step.
-- Never teaches inside this skill. Routes to `/explain` or external research.
+- Never teaches inside this skill. Routes to `/learn` or external research.
 - Never writes the plan to a file unless asked.
 - Never overrides the user's direction. Surfaces tradeoffs, then lets them choose.
 - Never falls back to non-vault sources for grounding. If `~/.claude/vault-config.json` is missing, stop and route to `init-vault`.

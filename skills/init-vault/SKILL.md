@@ -88,7 +88,7 @@ Show the user:
 - The vault path.
 - The config file path.
 - A one-line summary (folder count, template count).
-- Next steps: _"You can now use `add-new-concepts` to file new notes, and `/explain` when you want an analogy bridge to something already in your vault."_
+- Next steps: _"You can now use `add-new-concepts` to file new notes, and `/learn` when you want to understand a new topic — an analogy bridge to something in your vault, or a from-scratch walkthrough."_
 
 ## Hard rules
 

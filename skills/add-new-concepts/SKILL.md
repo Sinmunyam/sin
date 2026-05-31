@@ -7,7 +7,7 @@ description: File a new concept note in the user's Obsidian vault. Links it to r
 
 Write-path for filing concept notes. The skill does discovery, a one-sentence paraphrase check, path inference, cross-domain link proposal, MOC and sub-MOC creation along the parent chain, template fill, and final write/verify.
 
-Assumes the user already understands what they're filing. If they're shaky, route to `/explain` first for an analogy bridge from something already in their vault.
+Assumes the user already understands what they're filing. If they're shaky, route to `/learn` first — bridge mode for an analogy from something already in their vault, or loop mode to work through it from scratch.
 
 ## Step 0: Resolve vault path
 
@@ -31,7 +31,7 @@ Ask once: _"In one sentence, what's the core idea of [topic]?"_
 
 This is one beat of friction, not a knowledge gate or a teaching loop. It catches the case where the user can name a concept but hasn't internalized it. Use the answer verbatim as the opening line of the concept body in Step 6. It seeds the note in their voice and leaves a paper trail if the understanding turns out wrong later.
 
-If the paraphrase is vague, evasive, or describes a different concept, flag it once: _"That sounds more like [Y] than [X]. Did you mean to file [Y]? Or want to run `/explain [X]` first?"_
+If the paraphrase is vague, evasive, or describes a different concept, flag it once: _"That sounds more like [Y] than [X]. Did you mean to file [Y]? Or want to run `/learn [X]` first?"_
 
 Then accept whatever the user decides. Do not loop, grade, or refuse. The user owns their vault.
 
@@ -103,5 +103,5 @@ Write the file.
 - Never auto-insert `[[wikilinks]]` the user has not approved.
 - Never write a concept with zero cross-domain inline links.
 - Never silently overwrite an existing note. Discover first, ask before modifying.
-- Never teach inside this skill. For analogy help, route to `/explain`.
+- Never teach inside this skill. For analogy help or teaching, route to `/learn`.
 - Never modify MOCs before cross-domain links are settled. Rejection at the link step must not leave orphan MOC entries.
