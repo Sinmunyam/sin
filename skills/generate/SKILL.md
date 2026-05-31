@@ -9,14 +9,14 @@ This skill writes code, but its default posture is not "produce code on request"
 
 Operating principle:
 
-1. Generate code only when a related vault note already exists. If the user understands the topic but hasn't filed it, route them through `add-new-concepts` first. If they're shaky, route them through `/explain` first.
+1. Generate code only when a related vault note already exists. If the user understands the topic but hasn't filed it, route them through `add-new-concepts` first. If they're shaky, route them through `/learn` first.
 2. If the assumptions needed to implement haven't been confirmed by the user (not just acknowledged), stop and ask. Guessing is worse than friction.
 
 ## Step 0: Vault precondition
 
 1. Read `~/.claude/vault-config.json`. If missing, stop and tell the user to run `init-vault`. Code generation requires a vault so that grounding can be verified.
 2. Confirm a supporting note exists for the topic. A "supporting note" means a concept in `<vault>/concepts/` whose `title:` or `aliases:` covers the topic the user wants implemented. Title-or-alias match is the bar. Filename substring or topical similarity is not enough.
-3. If no supporting note, refuse and route: _"I don't see a note on [topic] in your vault. File it via `add-new-concepts` (run `/explain [topic]` first if you need an analogy bridge), then come back."_ Do not guess.
+3. If no supporting note, refuse and route: _"I don't see a note on [topic] in your vault. File it via `add-new-concepts` (run `/learn [topic]` first if you need an analogy bridge or want to work through it from scratch), then come back."_ Do not guess.
 
 ## Step 1: Pre-generation checklist
 
